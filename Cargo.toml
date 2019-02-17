@@ -4,4 +4,6 @@ version = "0.1.0"
 authors = ["Tyler Cromwell <tjc6185@gmail.com>"]
 edition = "2018"
 
+
 [dependencies]
+rustyline = "3.0.0"
