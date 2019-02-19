@@ -7,8 +7,9 @@ use rustyline::Editor;
 
 
 fn main() {
+    let history = ".rush_history";
     let mut rl = Editor::<()>::new();
-    if rl.load_history(".rush_history").is_err() {}
+    if rl.load_history(history).is_err() {}
 
     loop {
         let input = rl.readline("rush$ ");
@@ -32,5 +33,5 @@ fn main() {
         }
     }
 
-    rl.save_history("history.txt").unwrap();
+    rl.save_history(history).unwrap();
 }
