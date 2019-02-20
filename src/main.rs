@@ -13,6 +13,7 @@ fn main() {
 
     loop {
         let input = rl.readline("rush$ ");
+
         match input {
             Ok(line) => {
                 rl.add_history_entry(line.as_ref());
@@ -20,11 +21,19 @@ fn main() {
                 let tokens: Vec<&str> = tokens.collect();
                 let output = Command::new(tokens[0])
                     .args(tokens[1..tokens.len()].into_iter())
-                    .output()
-                    .expect("failed to execute process");
-                stdout().write_all(&output.stdout).unwrap();
+                    .output();
+
+                match output {
+                    Ok(result) => {
+                        stdout().write_all(&result.stdout).unwrap();
+                        stderr().write_all(&result.stderr).unwrap();
+                    },
+                    Err(err) => {
+                        println!("Error: {}", err);
+                    }
+                }
             },
-            //Err(ReadlineError::Interrupted) => {break},
+            Err(ReadlineError::Interrupted) => {},
             Err(ReadlineError::Eof) => {break},
             Err(err) => {
                 println!("Error: {:?}", err);
