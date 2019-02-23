@@ -1,3 +1,4 @@
+use std::env;
 use std::io::*;
 use std::process::Command;
 
@@ -13,6 +14,7 @@ fn main() {
 
     loop {
         let input = rl.readline("rush$ ");
+        // Need to reset errors
 
         match input {
             Ok(line) => {
@@ -20,7 +22,12 @@ fn main() {
                 let tokens = line.split(" ");
                 let tokens: Vec<&str> = tokens.collect();
 
-                if tokens[0] == "exit" {
+                if tokens[0] == "cd" {
+                    env::set_current_dir(tokens[1]).unwrap();
+                    // Need error checking
+                    continue;
+                }
+                else if tokens[0] == "exit" {
                     break;
                 }
 
@@ -34,7 +41,7 @@ fn main() {
                         stderr().write_all(&result.stderr).unwrap();
                     },
                     Err(err) => {
-                        println!("Error: {}", err);
+                        eprintln!("Error: {}", err);
                     }
                 }
             },
