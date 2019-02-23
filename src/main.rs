@@ -2,6 +2,8 @@ use std::env;
 use std::io::*;
 use std::process::Command;
 
+extern crate dirs;
+
 extern crate rustyline;
 use rustyline::error::ReadlineError;
 use rustyline::Editor;
@@ -21,16 +23,29 @@ fn main() {
                 let tokens = line.split(" ");
                 let tokens: Vec<&str> = tokens.collect();
                 let command = tokens[0].trim();
+                let home = dirs::home_dir().unwrap();
 
                 if command == "cd" {
-                    let directory = tokens[1];
-                    let result = env::set_current_dir(directory);
-                    match result {
+                    let mut directory = "";
+
+                    if tokens.len() == 1 {
+                        directory = home.to_str().unwrap();
+                    }
+                    else {
+                        directory = tokens[1].trim();
+
+                        if directory == "~" {
+                            directory = home.to_str().unwrap();
+                        }
+                    }
+
+                    match env::set_current_dir(directory) {
                         Ok(_) => {},
                         Err(err) => {
                             eprintln!("{}: {}", directory, err);
                         }
                     }
+
                     continue;
                 }
                 else if command == "exit" {
