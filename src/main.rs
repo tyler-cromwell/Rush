@@ -19,11 +19,16 @@ fn main() {
                 rl.add_history_entry(line.as_ref());
                 let tokens = line.split(" ");
                 let tokens: Vec<&str> = tokens.collect();
-                let output = Command::new(tokens[0])
+
+                if tokens[0] == "exit" {
+                    break;
+                }
+
+                let result = Command::new(tokens[0])
                     .args(tokens[1..tokens.len()].into_iter())
                     .output();
 
-                match output {
+                match result {
                     Ok(result) => {
                         stdout().write_all(&result.stdout).unwrap();
                         stderr().write_all(&result.stderr).unwrap();
