@@ -14,24 +14,33 @@ fn main() {
 
     loop {
         let input = rl.readline("rush$ ");
-        // Need to reset errors
 
         match input {
             Ok(line) => {
                 rl.add_history_entry(line.as_ref());
                 let tokens = line.split(" ");
                 let tokens: Vec<&str> = tokens.collect();
+                let command = tokens[0].trim();
 
-                if tokens[0] == "cd" {
-                    env::set_current_dir(tokens[1]).unwrap();
-                    // Need error checking
+                if command == "cd" {
+                    let directory = tokens[1];
+                    let result = env::set_current_dir(directory);
+                    match result {
+                        Ok(_) => {},
+                        Err(err) => {
+                            eprintln!("{}: {}", directory, err);
+                        }
+                    }
                     continue;
                 }
-                else if tokens[0] == "exit" {
+                else if command == "exit" {
                     break;
                 }
+                else if command == "" {
+                    continue;
+                }
 
-                let result = Command::new(tokens[0])
+                let result = Command::new(command)
                     .args(tokens[1..tokens.len()].into_iter())
                     .output();
 
@@ -41,7 +50,7 @@ fn main() {
                         stderr().write_all(&result.stderr).unwrap();
                     },
                     Err(err) => {
-                        eprintln!("Error: {}", err);
+                        eprintln!("{}: {}", command, err);
                     }
                 }
             },
