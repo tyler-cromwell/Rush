@@ -19,6 +19,7 @@ fn main() {
 
         match input {
             Ok(line) => {
+                let line = line.trim();
                 rl.add_history_entry(line.as_ref());
                 let tokens = line.split(" ");
                 let tokens: Vec<&str> = tokens.collect();
@@ -26,16 +27,16 @@ fn main() {
                 let home = dirs::home_dir().unwrap();
 
                 if command == "cd" {
-                    let mut directory = "";
+                    let directory;
 
                     if tokens.len() == 1 {
                         directory = home.to_str().unwrap();
                     }
                     else {
-                        directory = tokens[1].trim();
-
-                        if directory == "~" {
+                        if tokens[1] == "~" {
                             directory = home.to_str().unwrap();
+                        } else {
+                            directory = tokens[1];
                         }
                     }
 
@@ -72,7 +73,7 @@ fn main() {
             Err(ReadlineError::Interrupted) => {},
             Err(ReadlineError::Eof) => {break},
             Err(err) => {
-                println!("Error: {:?}", err);
+                eprintln!("Error: {:?}", err);
                 break
             }
         }
