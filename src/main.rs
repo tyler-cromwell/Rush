@@ -11,6 +11,8 @@ use rustyline::Editor;
 
 fn main() {
     let history = ".rush_history";
+    let home = dirs::home_dir().unwrap();
+    let home = home.to_str().unwrap();
     let mut rl = Editor::<()>::new();
     if rl.load_history(history).is_err() {}
 
@@ -32,30 +34,24 @@ fn main() {
         let tokens = line.split(" ");
         let tokens: Vec<&str> = tokens.collect();
         let command = tokens[0].trim();
-        let home = dirs::home_dir().unwrap();
 
         if command == "cd" {
             let directory;
 
             if tokens.len() == 1 {
-                directory = home.to_str().unwrap();
-            }
-            else {
+                directory = home;
+            } else {
                 if tokens[1] == "~" {
-                    directory = home.to_str().unwrap();
+                    directory = home;
                 } else {
                     directory = tokens[1];
                 }
             }
 
             match env::set_current_dir(directory) {
-                Ok(_) => {},
-                Err(err) => {
-                    eprintln!("{}: {}", directory, err);
-                }
+                Ok(_) => continue,
+                Err(err) => {eprintln!("{}: {}", directory, err);}
             }
-
-            continue;
         }
         else if command == "exit" {
             break;
@@ -73,9 +69,7 @@ fn main() {
                 stdout().write_all(&result.stdout).unwrap();
                 stderr().write_all(&result.stderr).unwrap();
             },
-            Err(err) => {
-                eprintln!("{}: {}", command, err);
-            }
+            Err(err) => {eprintln!("{}: {}", command, err);}
         }
     }
 
