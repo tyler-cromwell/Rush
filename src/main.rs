@@ -10,11 +10,11 @@ use rustyline::Editor;
 
 
 fn main() {
-    let history = ".rush_history";
     let home = dirs::home_dir().unwrap();
     let home = home.to_str().unwrap();
+    let history = home.to_owned() + "/.rush_history";
     let mut rl = Editor::<()>::new();
-    if rl.load_history(history).is_err() {}
+    if rl.load_history(&history).is_err() {}
 
     loop {
         let input = rl.readline("rush$ ");
@@ -66,12 +66,12 @@ fn main() {
 
         match result {
             Ok(result) => {
-                stdout().write_all(&result.stdout).unwrap();
-                stderr().write_all(&result.stderr).unwrap();
+                stdout().write_all(&result.stdout);
+                stderr().write_all(&result.stderr);
             },
             Err(err) => {eprintln!("{}: {}", command, err);}
         }
     }
 
-    rl.save_history(history).unwrap();
+    rl.save_history(&history);
 }
